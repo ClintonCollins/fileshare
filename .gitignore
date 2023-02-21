@@ -1,0 +1,6 @@
+/fileshare
+/fileshare.exe
+/.env
+/certs/
+/database/dbconfig.yml
+/database/sqlboiler.toml

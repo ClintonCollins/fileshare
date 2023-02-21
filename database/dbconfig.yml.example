@@ -1,0 +1,4 @@
+development:
+  dialect: postgres
+  datasource: dbname=dev user=dev password=dev_password sslmode=disable
+  dir: migrations
