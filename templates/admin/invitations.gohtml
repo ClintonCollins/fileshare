@@ -1,0 +1,69 @@
+{{ template "main_layout" .}}
+{{ define "content" }}
+<main class="container-fluid">
+	<confirm-modal id="invitations-confirm"></confirm-modal>
+	<form-modal persist="true" animate="true">
+		<h3 slot="title">Create Invitation</h3>
+		<form slot="form" id="create-invitation-form" action="/admin/invitations" method="POST">
+			<label for="email">Email</label>
+			<input autofocus type="email" name="email" id="email" required>
+			<button type="submit">Create Invitation</button>
+		</form>
+	</form-modal>
+	<form method="post" action="/admin/invitations/delete" class="action-form" autocomplete="off">
+		<div class="action-nav">
+			<details role="list" class="select-action opacity-0">
+				<summary aria-haspopup="listbox" role="button" class="button-sm">Select an action</summary>
+				<ul role="listbox">
+					<li class="delete-all-selected-action" role="option">
+						<a>Delete selected invites</a>
+					</li>
+				</ul>
+			</details>
+			<div class="pagination">
+		  {{ if .paginationData }}{{ ( paginate .paginationData "invitations") }}{{ end }}
+			</div>
+			<div class="search-div">
+				<input type="search" data-url="/admin/invitations" name="search" value="{{ .search }}" class="search" placeholder="Search invitations...">
+				<button type="button" class="search-button button-sm">Search</button>
+			</div>
+			<button class="primary button-sm" id="create-invitation-button">Create Invitation</button>
+		</div>
+		<figure>
+			<table>
+				<thead>
+				<tr>
+					<th scope="col">
+						<input class="select-all" type="checkbox">
+					</th>
+					<th>ID / URL</th>
+					<th>Email</th>
+					<th>Active</th>
+					<th>Expires At</th>
+					<th>Created At</th>
+					<th>Created By</th>
+				</tr>
+				</thead>
+				<tbody>
+		{{ range .invitations }}
+				<tr>
+					<td>
+						<input data-id="{{ .ID }}" class="item-selected-checkbox" type="checkbox" name="ids" value="{{ .ID }}">
+					</td>
+					<td><a href="{{ (inviteURL .ID) }}">{{ .ID }}</a></td>
+					<td>{{ .Email }}</td>
+					<td>{{ .Active }}</td>
+					<td>{{ .ExpiresAt }}</td>
+					<td>{{ .CreatedAt }}</td>
+					<td>{{ if .CreatedByAccountID }} {{ .CreatedByAccountID.String }} {{ end }}</td>
+				</tr>
+		{{ end }}
+				</tbody>
+			</table>
+		</figure>
+	</form>
+</main>
+{{ end }}
+{{ define "scripts" }}
+<script type="module" src="/static/js/admin.js"></script>
+		{{ end }}

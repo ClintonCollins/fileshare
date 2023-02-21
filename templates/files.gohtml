@@ -1,0 +1,73 @@
+{{ template "main_layout" .}}
+{{- define "content" -}}
+<main class="container-fluid" id="files-list-page-container">
+	<confirm-modal></confirm-modal>
+	<form method="post" action="/action/delete" class="action-form" autocomplete="off">
+		<div class="action-nav">
+			<details role="list" class="select-action opacity-0">
+				<summary aria-haspopup="listbox" role="button" class="button-sm">Select an action</summary>
+				<ul role="listbox">
+					<li class="delete-all-selected-action" role="option">
+						<a>Delete selected files</a>
+					</li>
+				</ul>
+			</details>
+			<div class="pagination">
+		  {{ if .paginationData }}{{ ( paginate .paginationData "files") }}{{ end }}
+			</div>
+			<div class="search-div">
+				<input type="search" name="search" value="{{ .search }}" class="search" placeholder="Search files...">
+				<button type="button" class="search-button button-sm">Search</button>
+			</div>
+		</div>
+		<figure>
+			<table role="grid">
+				<thead>
+				<tr>
+					<th scope="col">
+						<input class="select-all" type="checkbox">
+					</th>
+					<th scope="col">Preview</th>
+					<th scope="col">Name</th>
+					<th scope="col">URL</th>
+					<th scope="col">Size</th>
+					<th scope="col">Type</th>
+				</tr>
+				</thead>
+				<tbody>
+		{{- range .files -}}
+				<tr>
+					<td>
+						<input data-id="{{ .ID }}" class="item-selected-checkbox" type="checkbox" name="ids" value="{{ .ID }}">
+					</td>
+					<td class="media-preview-cell" data-url="{{ .URL }}"
+					    data-type="{{ if .IsImage}}image{{ else if .IsVideo}}video{{ else if .IsAudio}}audio{{else}}other{{end}}">
+			  {{- if .IsImage -}}
+						<img src="{{ .URL }}" alt="{{ .Name }}" loading="lazy" width="50" height="50">
+			  {{- else if .IsVideo -}}
+						<img src="/static/images/video_placeholder.webp" alt="{{ .Name }}" loading="lazy" width="50" height="50">
+			  {{- else if .IsAudio -}}
+						<img src="/static/images/audio_placeholder.webp" alt="{{ .Name }}" loading="lazy" width="50" height="50">
+			  {{- else -}}
+						<img src="/static/images/no_preview.webp" alt="{{ .Name }}" loading="lazy" width="50" height="50">
+			  {{- end -}}
+					</td>
+					<td>{{ .Name }}</td>
+					<td><a href="{{ .URL }}" target="_blank">{{ .URL }}</a></td>
+					<td>{{ (humanizeBytes .Size) }}</td>
+					<td>{{ .MimeType }}</td>
+				</tr>
+		{{ end }}
+				</tbody>
+			</table>
+		</figure>
+	</form>
+	<div class="pagination">
+	  {{ if .paginationData }}{{ ( paginate .paginationData "files") }}{{ end }}
+	</div>
+</main>
+<media-preview-modal animate></media-preview-modal>
+{{- end -}}
+{{ define "scripts" }}
+<script type="module" src="/static/js/files.js"></script>
+		{{ end }}

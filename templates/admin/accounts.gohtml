@@ -1,0 +1,58 @@
+{{ template "main_layout" .}}
+{{ define "content" }}
+<main class="container-fluid">
+	<confirm-modal id="accounts-confirm"></confirm-modal>
+	<form method="post" action="/admin/accounts/delete" class="action-form" autocomplete="off">
+		<div class="action-nav">
+			<details role="list" class="select-action opacity-0">
+				<summary aria-haspopup="listbox" role="button" class="button-sm">Select an action</summary>
+				<ul role="listbox">
+					<li class="delete-all-selected-action" role="option">
+						<a>Delete selected accounts</a>
+					</li>
+				</ul>
+			</details>
+			<div class="pagination">
+		  {{ if .paginationData }}{{ ( paginate .paginationData "accounts") }}{{ end }}
+			</div>
+			<div class="search-div">
+				<input type="search" data-url="/admin/accounts" name="search" value="{{ .search }}" class="search" placeholder="Search accounts...">
+				<button type="button" class="search-button button-sm">Search</button>
+			</div>
+		</div>
+		<figure>
+			<table>
+				<thead>
+				<tr>
+					<th scope="col">
+						<input class="select-all" type="checkbox">
+					</th>
+					<th>ID</th>
+					<th>Email</th>
+					<th>Name</th>
+					<th>Superuser</th>
+					<th>Created At</th>
+				</tr>
+				</thead>
+				<tbody>
+		{{ range .accounts }}
+				<tr>
+					<td>
+						<input data-id="{{ .ID }}" class="item-selected-checkbox" type="checkbox" name="ids" value="{{ .ID }}">
+					</td>
+					<td>{{ .ID }}</td>
+					<td>{{ .Email }}</td>
+					<td>{{ .DisplayName }}</td>
+					<td>{{ .IsSuperuser }}</td>
+					<td>{{ .CreatedAt }}</td>
+				</tr>
+		{{ end }}
+				</tbody>
+			</table>
+		</figure>
+	</form>
+</main>
+{{ end }}
+{{ define "scripts" }}
+<script type="module" src="/static/js/admin.js"></script>
+		{{ end }}

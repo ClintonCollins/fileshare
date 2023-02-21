@@ -1,0 +1,58 @@
+{{ define "main_layout"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<link rel="stylesheet" href="/static/css/fileshare.css">
+	<script src="/static/js/fileshare.js" type="module"></script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500;700&display=swap" rel="stylesheet">
+	{{ block "head" . }}
+	{{ end }}
+	<title>{{ .title }}</title>
+</head>
+<body>
+<nav class="container-fluid">
+	<ul>
+		<li><a id="brand-link" href="/">FileShare</a></li>
+	</ul>
+	{{ if .currentAccount }}
+	<ul>
+		<li><a href="/">Upload</a></li>
+		<li><a href="/files">Files</a></li>
+		<li><a href="/about">About</a></li>
+	  {{ if .currentAccount.IsSuperuser }}
+		<li><a href="/admin/invitations">Invitations</a></li>
+		<li><a href="/admin/accounts">Accounts</a></li>
+	  {{ end }}
+	</ul>
+	{{ end }}
+	<ul>
+		<li data-tooltip="Toggle theme" data-placement="bottom" class="dark-mode-toggle">
+			<span class="dark-mode-icon"></span>
+		</li>
+	  {{ if .currentAccount }}
+		<li><a href="/auth/logout">Logout</a></li>
+	  {{ else }}
+		<li><a href="/login">Login</a></li>
+	  {{ end }}
+	</ul>
+</nav>
+{{ block "content" . }}
+{{ end }}
+{{ block "templates" .}}
+{{ end }}
+{{ if .FlashMessage }}
+<div class="flash-wrapper">
+	<div class="flash-notification {{ .FlashMessage.Alert }}">
+	  {{ .FlashMessage.Message }}
+	</div>
+</div>
+{{ end }}
+</body>
+{{ block "scripts" .}}
+{{ end }}
+</html>
+		{{ end }}

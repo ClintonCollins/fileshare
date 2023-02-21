@@ -1,0 +1,11 @@
+{{ template "main_layout" .}}
+{{- define "content" -}}
+<main class="container-fluid">
+	<section class="center-items">
+		<fileshare-alert class="alert-error bounce-in">
+			<span class="icon-error"></span>
+		{{ .errorMessage }}
+		</fileshare-alert>
+	</section>
+</main>
+		{{- end -}}

@@ -1,0 +1,39 @@
+{{ template "main_layout" .}}
+{{- define "content" -}}
+<main class="container-fluid">
+	<section id="upload-section">
+		<article>
+			<div id="upload-zone" class="center-items">
+				<button id="selected-files-upload-button" class="bg-primary upload-zone-button opacity-0">Upload added files</button>
+				<label for="upload-zone-input" class="upload-zone-button" id="upload-zone-choose-files-button">Add files</label>
+				<span id="upload-zone-message">or drag and drop files anywhere on this page (Copy paste works too!)</span>
+				<input id="upload-zone-input" type="file" multiple>
+			</div>
+			<div id="selected-files-card" class="hidden">
+				<section id="selected-files-container">
+				</section>
+			</div>
+		</article>
+	</section>
+</main>
+<template id="selected-files-template">
+	<div class="selected-files-row">
+		<div class="selected-file-remove-box"><i class="fa-xl fa-solid fa-xmark text-red"></i></div>
+		<div class="selected-file-preview-box"></div>
+		<div class="selected-file-name-box"></div>
+		<div class="selected-file-size-box"></div>
+		<div class="selected-file-type-box"></div>
+		<div class="selected-file-url-box"></div>
+		<div class="selected-file-progress-box">
+			<progress class="hidden" value="0" max="100"></progress>
+			<fileshare-alert class="alert-error alert-sm width-100-percent hidden"></fileshare-alert>
+		</div>
+		<div class="selected-file-progress-speed-box"></div>
+		<div class="selected-file-status-box"></div>
+	</div>
+</template>
+<media-preview-modal animate></media-preview-modal>
+{{- end -}}
+{{ define "scripts" }}
+<script type="module" src="/static/js/upload.js"></script>
+		{{ end }}
