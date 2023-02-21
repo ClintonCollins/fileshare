@@ -148,6 +148,14 @@ func (inst *httpInstance) Listen() error {
 	r := inst.buildRouter()
 
 	inst.httpServer.Handler = r
+	inst.httpServer.TLSConfig = &tls.Config{
+		MinVersion:       tls.VersionTLS13,
+		CurvePreferences: []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
+		CipherSuites: []uint16{
+			tls.TLS_CHACHA20_POLY1305_SHA256,
+			tls.TLS_AES_256_GCM_SHA384,
+		},
+	}
 
 	if inst.useAutoSSL {
 		_ = os.MkdirAll(".fileshare_cache", os.ModePerm)
@@ -156,10 +164,8 @@ func (inst *httpInstance) Listen() error {
 			Cache:  autocert.DirCache(".fileshare_cache"),
 		}
 
-		inst.httpServer.TLSConfig = &tls.Config{
-			GetCertificate: autoTLSManager.GetCertificate,
-			NextProtos:     []string{acme.ALPNProto},
-		}
+		inst.httpServer.TLSConfig.GetCertificate = autoTLSManager.GetCertificate
+		inst.httpServer.TLSConfig.NextProtos = []string{acme.ALPNProto}
 
 		return inst.httpServer.ListenAndServeTLS("", "")
 	}
