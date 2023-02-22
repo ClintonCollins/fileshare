@@ -26,7 +26,7 @@ builds:
       - -s -w -X main.build={{.Version}}
 
 archives:
-  - format: tar.gz
+  - format: binary
     # this name template makes the OS and Arch compatible with the results of uname.
     name_template: >-
       {{ .ProjectName }}_
@@ -38,7 +38,7 @@ archives:
     # use zip for windows archives
     format_overrides:
     - goos: windows
-      format: zip
+      format: binary
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -49,12 +49,6 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
-release:
-  extra_files:
-    - glob: "{{ .ProjectName }}-Linux-x86_64"
-    - glob: "{{ .ProjectName }}-Windows-x86_64.exe"
-    - glob: "{{ .ProjectName }}-Linux-arm64"
-    - glob: "{{ .ProjectName }}-Windows-arm64.exe"
 
 
 # The lines beneath this are called `modelines`. See `:help modeline`
