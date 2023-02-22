@@ -6,6 +6,7 @@ specifiers:
   '@picocss/pico': ^1.5.7
   '@types/humanize-duration': ^3.27.1
   '@types/node': ^18.14.0
+  '@types/ua-parser-js': ^0.7.36
   animate.css: ^4.1.1
   autoprefixer: ^10.4.13
   filesize: ^10.0.6
@@ -15,6 +16,7 @@ specifiers:
   postcss-scss: ^4.0.6
   sass: ^1.58.0
   typescript: ^4.9.3
+  ua-parser-js: ^1.0.33
   vite: ^4.1.0
 
 dependencies:
@@ -22,12 +24,14 @@ dependencies:
   animate.css: 4.1.1
   filesize: 10.0.6
   humanize-duration: 3.28.0
+  ua-parser-js: 1.0.33
 
 devDependencies:
   '@fortawesome/fontawesome-free': 6.3.0
   '@fullhuman/postcss-purgecss': 5.0.0_postcss@8.4.21
   '@picocss/pico': 1.5.7
   '@types/node': 18.14.0
+  '@types/ua-parser-js': 0.7.36
   autoprefixer: 10.4.13_postcss@8.4.21
   postcss: 8.4.21
   postcss-font-magician: 3.0.0_postcss@8.4.21
@@ -261,6 +265,10 @@ packages:
 
   /@types/node/18.14.0:
     resolution: {integrity: sha512-5EWrvLmglK+imbCJY0+INViFWUHg1AHel1sq4ZVSfdcNqGy9Edv3UB9IIzzg+xPaUcAgZYcfVs2fBcwDeZzU0A==}
+    dev: true
+
+  /@types/ua-parser-js/0.7.36:
+    resolution: {integrity: sha512-N1rW+njavs70y2cApeIw1vLMYXRwfBy+7trgavGuuTfOd7j1Yh7QTRc/yqsPl6ncokt72ZXuxEU0PiCp9bSwNQ==}
     dev: true
 
   /amdefine/1.0.1:
@@ -764,6 +772,10 @@ packages:
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true
+
+  /ua-parser-js/1.0.33:
+    resolution: {integrity: sha512-RqshF7TPTE0XLYAqmjlu5cLLuGdKrNu9O1KLA/qp39QtbZwuzwv1dT46DZSopoUMsYgXpB3Cv8a03FI8b74oFQ==}
+    dev: false
 
   /update-browserslist-db/1.0.10_browserslist@4.21.5:
     resolution: {integrity: sha512-OztqDenkfFkbSG+tRxBeAnCVPckDBcvibKd35yDONx6OU8N7sqgwc7rCbkJ/WcYtVRZ4ba68d6byhC21GFh7sQ==}

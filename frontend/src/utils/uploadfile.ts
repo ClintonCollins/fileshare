@@ -1,6 +1,11 @@
-import {filesize} from "filesize";
-import humanizeDuration from "humanize-duration";
-import { MediaPreviewModal} from '../components/MediaPreviewModal'
+import {filesize} from 'filesize'
+import humanizeDuration from 'humanize-duration'
+import {MediaPreviewModal} from '../components/MediaPreviewModal'
+// @ts-ignore
+import UAParser from 'ua-parser-js'
+
+const parser = new UAParser()
+const isMobileDevice = parser.getDevice().type?.toLowerCase() === 'mobile'
 
 MediaPreviewModal.register()
 const previewModal = document.querySelector('media-preview-modal') as MediaPreviewModal
@@ -162,6 +167,11 @@ export default class UploadFilesHandler {
         } else {
             this.fileTypeCategory = FileTypeCategory.Other
         }
+        const setMobilePreview = () => {
+            const imageElement = document.createElement('img')
+            imageElement.src = '/static/images/no_preview.webp'
+            this.previewBoxElement.appendChild(imageElement)
+        }
         switch (this.fileTypeCategory) {
             case FileTypeCategory.Image:
                 const reader = new FileReader()
@@ -177,21 +187,27 @@ export default class UploadFilesHandler {
                 reader.readAsDataURL(this.file)
                 break
             case FileTypeCategory.Video:
+                if (isMobileDevice) {
+                    setMobilePreview()
+                    break
+                }
                 const videoElement = document.createElement('video')
                 videoElement.src = URL.createObjectURL(this.file)
                 videoElement.controls = false
                 this.previewBoxElement.appendChild(videoElement)
                 break
             case FileTypeCategory.Audio:
+                if (isMobileDevice) {
+                    setMobilePreview()
+                    break
+                }
                 const audioElement = document.createElement('audio')
                 audioElement.src = URL.createObjectURL(this.file)
                 audioElement.controls = true
                 this.previewBoxElement.appendChild(audioElement)
                 break
             default:
-                const imageElement = document.createElement('img')
-                imageElement.src = '/static/images/no_preview.webp'
-                this.previewBoxElement.appendChild(imageElement)
+                setMobilePreview()
         }
         this.selectedFilesContainerElement.prepend(this.selectedFilesRow)
         this.selectedFilesCardElement.classList.remove('hidden')

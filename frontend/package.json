@@ -12,6 +12,7 @@
     "@fullhuman/postcss-purgecss": "^5.0.0",
     "@picocss/pico": "^1.5.7",
     "@types/node": "^18.14.0",
+    "@types/ua-parser-js": "^0.7.36",
     "autoprefixer": "^10.4.13",
     "postcss": "^8.4.21",
     "postcss-font-magician": "^3.0.0",
@@ -24,6 +25,7 @@
     "@types/humanize-duration": "^3.27.1",
     "animate.css": "^4.1.1",
     "filesize": "^10.0.6",
-    "humanize-duration": "^3.28.0"
+    "humanize-duration": "^3.28.0",
+    "ua-parser-js": "^1.0.33"
   }
 }
