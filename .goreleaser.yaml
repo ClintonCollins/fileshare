@@ -49,6 +49,13 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+release:
+  extra_files:
+    - glob: "{{ .ProjectName }}-Linux-x86_64"
+    - glob: "{{ .ProjectName }}-Windows-x86_64.exe"
+    - glob: "{{ .ProjectName }}-Linux-arm64"
+    - glob: "{{ .ProjectName }}-Windows-arm64.exe"
+
 
 # The lines beneath this are called `modelines`. See `:help modeline`
 # Feel free to remove those if you don't want/use them.
