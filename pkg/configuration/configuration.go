@@ -41,7 +41,7 @@ func loadEnv() (*Configuration, error) {
 	config := &Configuration{}
 	errEnv := godotenv.Load()
 	if errEnv != nil {
-		log.Warn().Err(errEnv).Msg("Failed to load .env file.")
+		log.Debug().Err(errEnv).Msg("Failed to load .env file.")
 	}
 	err := env.Parse(config, env.Options{
 		Prefix: "FILESHARE_",
