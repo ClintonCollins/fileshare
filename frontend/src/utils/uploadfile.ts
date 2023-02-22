@@ -342,8 +342,14 @@ export default class UploadFilesHandler {
         this.progressAlertElement.classList.remove('hidden')
         this.progressAlertElement.classList.remove('alert-success')
         this.progressAlertElement.classList.add('alert-error')
-        this.progressAlertElement.textContent = 'Failed to upload file! ' + (this.xhr.responseText !== '' ? this.xhr.responseText : this.xhr.statusText)
-        this._errorMessage = this.xhr.responseText !== '' ? this.xhr.responseText : this.xhr.statusText
+        const response = this.xhr.response as { error: boolean, message: string, url: string }
+        if (!response) {
+            this.progressAlertElement.textContent = `Failed to upload file! ${this.xhr.statusText}`
+            this._errorMessage = `Failed to upload file! ${this.xhr.statusText}`
+            return
+        }
+        this.progressAlertElement.textContent = `Failed to upload file! ${this.xhr.statusText}: ${response.message}`
+        this._errorMessage = response.message
     }
 
     private setStatus(status: UploadStatus) {

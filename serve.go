@@ -87,14 +87,14 @@ func getHTTPServerInstance(config *configuration.Configuration, db *sql.DB, logg
 	}
 	staticFileHandler, errStatic := getStaticFileHandler(config.DevMode)
 
+	// Extremely generous timeouts for slow downloads/uploads.
 	httpServer := &http.Server{
 		Addr:                         net.JoinHostPort(inst.hostAddress, inst.hostPort),
 		DisableGeneralOptionsHandler: false,
 		TLSConfig:                    nil,
-		ReadTimeout:                  time.Second * 60,
-		ReadHeaderTimeout:            time.Second * 60,
-		WriteTimeout:                 time.Second * 60,
-		IdleTimeout:                  time.Second * 60,
+		ReadTimeout:                  time.Hour * 6,
+		WriteTimeout:                 time.Hour * 6,
+		ReadHeaderTimeout:            time.Second * 15,
 	}
 	inst.httpServer = httpServer
 
