@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -51,26 +52,55 @@ func main() {
 
 	ctx, ctxCancel := context.WithCancel(context.Background())
 
+	idleConnsClosed := make(chan struct{})
+
 	go func() {
 		<-osSignals
 		ctxCancel()
 		gracefulShutdown = true
 		logger.Info().Msg("Received interrupt signal, shutting down...")
-		ctxShutdown, _ := context.WithTimeout(context.Background(), time.Second*30)
+		ctxShutdown, shutdownCtxCancel := context.WithTimeout(context.Background(), time.Second*30)
+		if httpServerInstance.redirectHTTPServer != nil {
+			go func() {
+				errShutdown := httpServerInstance.redirectHTTPServer.Shutdown(ctxShutdown)
+				if errShutdown != nil {
+					logger.Fatal().Err(errShutdown).Msg("Failed to shutdown redirect HTTP server.")
+				}
+			}()
+		}
 		errShutdown := httpServerInstance.httpServer.Shutdown(ctxShutdown)
 		if errShutdown != nil {
 			logger.Fatal().Err(errShutdown).Msg("Failed to shutdown HTTP server.")
 		}
+		shutdownCtxCancel()
+		// Don't wait for redirect server to shut down.
+		close(idleConnsClosed)
 	}()
 
 	// Startup automated job handling.
 	go automatedProcessLooper(ctx, d, logger)
 
-	logger.Info().Msg("Webserver started and listening for connections.")
+	go func() {
+		// Enable https redirect.
+		if c.UseHTTPSRedirect {
+			logger.Info().Msgf("Redirect webserver started and listening for connections on %s",
+				net.JoinHostPort(c.HostAddress, "80"))
+			errListen := httpServerInstance.ListenHTTPRedirect()
+			if errListen != nil {
+				if !gracefulShutdown {
+					logger.Fatal().Err(errListen).Msg("Failed to start redirect HTTP server.")
+				}
+			}
+		}
+	}()
+
+	logger.Info().Msgf("Webserver started and listening for connections on %s with public URL %s.",
+		net.JoinHostPort(c.HostAddress, c.HostPort), c.PublicURL)
 	errListen := httpServerInstance.Listen()
 	if errListen != nil {
 		if !gracefulShutdown {
 			logger.Fatal().Err(errListen).Msg("Failed to start HTTP server.")
 		}
 	}
+	<-idleConnsClosed
 }

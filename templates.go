@@ -78,7 +78,7 @@ func (inst *httpInstance) getTemplateFuncMap() template.FuncMap {
 func (inst *httpInstance) renderTemplate(w http.ResponseWriter, data interface{}, templatePaths ...string) {
 	tmpl, exists := inst.mainTemplates[strings.Join(templatePaths, ",")]
 	if !exists {
-		inst.logger.Info().Msgf("Template not found in cache, parsing... %s", strings.Join(templatePaths, ","))
+		inst.logger.Debug().Msgf("Template not found in cache, parsing... %s", strings.Join(templatePaths, ","))
 		t, err := inst.parseTemplate(templatePaths...)
 		if err != nil {
 			inst.logger.Fatal().Err(err).Msg("Failed to parse template.")

@@ -26,6 +26,7 @@ type Configuration struct {
 	UseSSL               bool   `env:"USE_SSL" envDefault:"false"`
 	SSLKeyFile           string `env:"SSL_KEY_FILE"`
 	SSLCertFile          string `env:"SSL_CERT_FILE"`
+	UseHTTPSRedirect     bool   `env:"USE_HTTPS_REDIRECT" envDefault:"false"`
 }
 
 func Get() (*Configuration, error) {
