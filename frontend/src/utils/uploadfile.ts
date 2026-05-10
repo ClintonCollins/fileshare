@@ -270,13 +270,6 @@ export default class UploadFilesHandler {
         })
     }
 
-    private calculateSpeedBetweenProgressUpdates(lastBytes: number, currentBytes: number,
-                                                 lastUpdateInSeconds: number, currentUpdateInSeconds: number): number {
-        const bytesDifference = currentBytes - lastBytes
-        const timeDifference = currentUpdateInSeconds - lastUpdateInSeconds
-        return this.calculateSpeedPerSecond(bytesDifference, timeDifference)
-    }
-
     private calculateSpeedPerSecond(bytes: number, timeInSeconds: number): number {
         return bytes / timeInSeconds
     }
@@ -287,8 +280,6 @@ export default class UploadFilesHandler {
         this.progressSpeedBoxElement.classList.remove('hidden')
         this.progressAlertElement.classList.add('hidden')
         return new Promise((resolve, reject) => {
-            let lastProgressUpdateBytes = 0
-            let lastProgressUpdateAt = new Date().getTime()
             this.uploadStartTime = new Date().getTime()
             this.xhr = new XMLHttpRequest()
             this.xhr.open('POST', UploadFilesHandler.uploadURL, true)
@@ -307,13 +298,19 @@ export default class UploadFilesHandler {
                 if (event.lengthComputable) {
                     this.progressBarElement.value = event.loaded
                     this.progressBarElement.max = event.total
-                    const lastUpdateInSeconds = Math.round(lastProgressUpdateAt / 1000)
-                    const currentUpdateInSeconds = Math.round(new Date().getTime() / 1000)
-                    const bytesPerSecond = this.calculateSpeedBetweenProgressUpdates(
-                        lastProgressUpdateBytes, event.loaded,
-                        lastUpdateInSeconds, currentUpdateInSeconds,
-                    )
-                    this.progressSpeedBoxElement.textContent = `${filesize(bytesPerSecond, {output: 'string'})}/s`
+                    const percentUploaded = event.total > 0 ? Math.round((event.loaded / event.total) * 100) : 0
+                    const elapsedSeconds = (new Date().getTime() - this.uploadStartTime) / 1000
+                    const averageBytesPerSecond =
+                        elapsedSeconds > 0 ? this.calculateSpeedPerSecond(event.loaded, elapsedSeconds) : 0
+                    const bytesPerSecondString = `${filesize(averageBytesPerSecond, {output: 'string'})}/s`
+                    let etaString = 'calculating'
+                    if (elapsedSeconds > 0 && averageBytesPerSecond > 0) {
+                        const remainingBytes = event.total - event.loaded
+                        const etaMilliseconds = (remainingBytes / averageBytesPerSecond) * 1000
+                        etaString = remainingBytes > 0 ? humanizeDuration(etaMilliseconds, {round: true}) : '0 seconds'
+                    }
+                    this.progressSpeedBoxElement.textContent =
+                        `${percentUploaded}% | ETA ${etaString} | ${bytesPerSecondString}`
                 }
             }
             this.xhr.upload.onloadend = (event) => {
