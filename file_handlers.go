@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -45,17 +44,15 @@ func (inst *httpInstance) postHandleFileUpload(w http.ResponseWriter, r *http.Re
 			inst.logger.Error().Err(errClose).Msg("Failed to close file.")
 		}
 	}()
-	fileBuf := &bytes.Buffer{}
-	teeReader := io.TeeReader(file, fileBuf)
-	mType, errMimeType := mimetype.DetectReader(teeReader)
+	mType, errMimeType := mimetype.DetectReader(file)
 	if errMimeType != nil {
 		inst.logger.Error().Err(errMimeType).Msg("Failed to detect mimetype.")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-	_, errDrain := io.Copy(io.Discard, teeReader)
-	if errDrain != nil {
-		inst.logger.Error().Err(errDrain).Msg("Failed to drain tee reader.")
+	_, errSeek := file.Seek(0, io.SeekStart)
+	if errSeek != nil {
+		inst.logger.Error().Err(errSeek).Msg("Failed to seek file.")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -102,7 +99,7 @@ func (inst *httpInstance) postHandleFileUpload(w http.ResponseWriter, r *http.Re
 		}
 	}()
 
-	_, errCopy := io.Copy(storedFile, fileBuf)
+	_, errCopy := io.Copy(storedFile, file)
 	if errCopy != nil {
 		inst.logger.Error().Err(errCopy).Msg("Failed to copy file.")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
